@@ -1,62 +1,41 @@
 <script setup lang="ts">
 /**
- * CompactionMechanism - Interactive, step-through animation of the *cut-point*
- * mechanic VS Code Copilot Chat uses to compact agent conversation history.
+ * CompactionMechanism - Simplified 3-step view of how VS Code Copilot Chat
+ * compacts agent conversation history.
  *
- * A row of conversation rounds steps through the 5 "how it works" steps:
- *  1. Pick the cut point  -> keep recent rounds verbatim
- *  2. Exclude the overflowing round (the last one blew the budget)
- *  3. Stop at the previous summary (compaction compounds)
- *  4. Generate the summary (same model, temp 0, 8-section <summary>)
- *  5. Re-insert as <conversation-summary> + breadcrumb to the on-disk transcript
+ *  1. Over budget  -> context blew the budget, history rendered newest-first
+ *  2. Summarize    -> keep recent rounds verbatim, fold the rest into one
+ *                     LLM-generated <summary> (same model, temp 0)
+ *  3. Under budget -> re-insert as a <conversation-summary> + a breadcrumb to
+ *                     the full on-disk transcript
  *
- * Self-contained Next / Back / Replay controls + optional auto-play.
+ * One Next / Replay button. No Back / Auto.
  */
-import { ref, computed, onUnmounted } from 'vue'
+import { ref, computed } from 'vue'
 import { motion, AnimatePresence } from 'motion-v'
 
-type Phase = 'idle' | 'cut' | 'exclude' | 'compound' | 'summarize' | 'done'
+type Phase = 'over' | 'summarize' | 'done'
 
 const PHASES: { id: Phase; label: string; caption: string }[] = [
   {
-    id: 'idle',
+    id: 'over',
     label: 'Over budget',
     caption:
-      'Context is over budget. Compaction renders history newest-first and decides what to keep.',
-  },
-  {
-    id: 'cut',
-    label: 'Cut point',
-    caption:
-      'Pick the cut point — keep the most recent rounds verbatim so the model resumes mid-task.',
-  },
-  {
-    id: 'exclude',
-    label: 'Exclude overflow',
-    caption:
-      'Exclude the overflowing round — the last round (R8) is what blew the budget; drop it from the summary.',
-  },
-  {
-    id: 'compound',
-    label: 'Compound',
-    caption:
-      'Stop at the previous summary — walk back, break at the first round that already has one. Compaction compounds; it never re-summarizes from scratch.',
+      'Context blew the budget. History is rendered newest-first to decide what to keep.',
   },
   {
     id: 'summarize',
     label: 'Summarize',
     caption:
-      'Generate the summary — one LLM call, same model, temperature 0 → an 8-section handoff inside a <summary> block. Old rounds fold into the existing summary.',
+      'Keep the most recent rounds verbatim; fold everything older into one LLM-generated <summary> (same model, temperature 0).',
   },
   {
     id: 'done',
-    label: 'Re-insert',
+    label: 'Under budget',
     caption:
-      'Re-insert as a <conversation-summary> turn + a breadcrumb to the full on-disk transcript. Read exact details on demand. Context is back under budget.',
+      'Re-insert as a <conversation-summary> turn plus a breadcrumb to the full on-disk transcript — read exact details on demand.',
   },
 ]
-
-const SUMMARIZE_INDEX = PHASES.findIndex(p => p.id === 'summarize')
 
 interface Block {
   id: string
@@ -83,9 +62,8 @@ const COMPACTED: Block[] = [
 ]
 
 const KEPT_IDS = ['R6', 'R7'] // recent, kept verbatim
-const SUMMARIZE_IDS = ['R4', 'R5'] // between the prev summary and the kept rounds
+const SUMMARIZE_IDS = ['R4', 'R5'] // folded into the summary
 const OVERFLOW_ID = 'R8'
-const PREV_SUMMARY_ID = 'S'
 
 const ACCENT = 'rgb(var(--color-accent))'
 const GREEN = '#10B981'
@@ -94,10 +72,9 @@ const AMBER = '#F59E0B'
 
 const phaseIndex = ref(0)
 const phase = computed<Phase>(() => PHASES[phaseIndex.value].id)
-const phaseIdx = computed(() => phaseIndex.value)
 
 const displayBlocks = computed(() =>
-  phaseIndex.value >= SUMMARIZE_INDEX ? COMPACTED : ORIGINAL,
+  phase.value === 'done' ? COMPACTED : ORIGINAL,
 )
 
 // Context fill bar: over budget until the summary is re-inserted.
@@ -116,7 +93,6 @@ const fillColor = computed(() =>
 )
 
 function blockStyle(block: Block): Record<string, string> {
-  const p = phase.value
   const base: Record<string, string> = {
     background: 'rgb(var(--color-card))',
     color: 'rgb(var(--color-text-base))',
@@ -131,121 +107,57 @@ function blockStyle(block: Block): Record<string, string> {
     return base
   }
 
-  // Round styling depends on phase.
-  const kept = KEPT_IDS.includes(block.id)
-  const toSummarize = SUMMARIZE_IDS.includes(block.id)
-  const isOverflow = block.id === OVERFLOW_ID
-
-  if (p !== 'idle') {
-    if (kept) {
+  if (phase.value === 'summarize') {
+    if (KEPT_IDS.includes(block.id)) {
       base.borderColor = GREEN
       base.color = GREEN
-    } else if (toSummarize && p !== 'idle') {
+    } else if (SUMMARIZE_IDS.includes(block.id)) {
       base.borderColor = AMBER
       base.color = AMBER
+    } else if (block.id === OVERFLOW_ID) {
+      base.opacity = '0.35'
+      base.borderColor = RED
+      base.color = RED
     }
-  }
-  if ((p === 'exclude' || p === 'compound') && isOverflow) {
-    base.opacity = '0.35'
-    base.borderColor = RED
-    base.color = RED
   }
   return base
 }
 
 function blockTag(block: Block): { text: string; color: string } | null {
-  const p = phase.value
-  if (block.id === OVERFLOW_ID && (p === 'exclude' || p === 'compound'))
-    return { text: 'overflowed', color: RED }
-  if (KEPT_IDS.includes(block.id) && p !== 'idle')
-    return { text: 'kept verbatim', color: GREEN }
-  if (SUMMARIZE_IDS.includes(block.id) && p !== 'idle' && p !== 'done')
-    return { text: 'to summarize', color: AMBER }
-  if (block.id === 'S2' && (p === 'summarize' || p === 'done'))
+  if (phase.value === 'summarize') {
+    if (block.id === OVERFLOW_ID) return { text: 'overflowed', color: RED }
+    if (KEPT_IDS.includes(block.id))
+      return { text: 'kept verbatim', color: GREEN }
+    if (SUMMARIZE_IDS.includes(block.id))
+      return { text: 'to summarize', color: AMBER }
+  }
+  if (block.id === 'S2' && phase.value === 'done')
     return { text: '8-section <summary>', color: ACCENT }
   return null
 }
 
-const pulseSummary = computed(() => phase.value === 'compound')
-
 // --- Controls -----------------------------------------------------------
-let autoTimer: ReturnType<typeof setTimeout> | undefined
-const isAuto = ref(false)
-
-function clearAuto() {
-  if (autoTimer) {
-    clearTimeout(autoTimer)
-    autoTimer = undefined
-  }
-  isAuto.value = false
-}
+const atEnd = computed(() => phaseIndex.value >= PHASES.length - 1)
 
 function next() {
   if (phaseIndex.value < PHASES.length - 1) phaseIndex.value += 1
-  else clearAuto()
+  else phaseIndex.value = 0
 }
-function back() {
-  clearAuto()
-  if (phaseIndex.value > 0) phaseIndex.value -= 1
-}
-function replay() {
-  clearAuto()
-  phaseIndex.value = 0
-}
-function toggleAuto() {
-  if (isAuto.value) {
-    clearAuto()
-    return
-  }
-  if (phaseIndex.value >= PHASES.length - 1) phaseIndex.value = 0
-  isAuto.value = true
-  tickAuto()
-}
-function tickAuto() {
-  autoTimer = setTimeout(() => {
-    if (!isAuto.value) return
-    if (phaseIndex.value < PHASES.length - 1) {
-      phaseIndex.value += 1
-      tickAuto()
-    } else {
-      isAuto.value = false
-    }
-  }, 1900)
-}
-
-const atEnd = computed(() => phaseIndex.value >= PHASES.length - 1)
-
-onUnmounted(clearAuto)
 </script>
 
 <template>
   <div class="my-6 rounded-lg bg-[rgb(var(--color-fill))] p-5">
-    <!-- Header + controls -->
+    <!-- Header + control -->
     <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
       <h3 class="text-base font-semibold text-[rgb(var(--color-text-base))]">
         Compaction: the cut-point mechanic
       </h3>
-      <div class="flex items-center gap-2">
-        <button
-          class="rounded border border-[rgb(var(--color-border))] px-3 py-1 text-sm text-[rgb(var(--color-text-base))] transition hover:opacity-80 disabled:opacity-30"
-          :disabled="phaseIdx === 0"
-          @click="back"
-        >
-          ‹ Back
-        </button>
-        <button
-          class="rounded bg-[rgb(var(--color-accent))] px-3 py-1 text-sm text-[rgb(var(--color-fill))] transition hover:opacity-80"
-          @click="atEnd ? replay() : next()"
-        >
-          {{ atEnd ? '↻ Replay' : 'Next ›' }}
-        </button>
-        <button
-          class="rounded border border-[rgb(var(--color-border))] px-3 py-1 text-sm text-[rgb(var(--color-text-base))] transition hover:opacity-80"
-          @click="toggleAuto"
-        >
-          {{ isAuto ? '❚❚ Pause' : '▶ Auto' }}
-        </button>
-      </div>
+      <button
+        class="rounded bg-[rgb(var(--color-accent))] px-3 py-1 text-sm text-[rgb(var(--color-fill))] transition hover:opacity-80"
+        @click="next"
+      >
+        {{ atEnd ? '↻ Replay' : 'Next ›' }}
+      </button>
     </div>
 
     <!-- Step progress -->
@@ -254,14 +166,14 @@ onUnmounted(clearAuto)
         <span
           class="rounded-full px-2.5 py-0.5 transition-all duration-300"
           :class="
-            i === phaseIdx
+            i === phaseIndex
               ? 'font-semibold'
-              : i < phaseIdx
+              : i < phaseIndex
                 ? 'opacity-50'
                 : 'opacity-30'
           "
           :style="
-            i === phaseIdx
+            i === phaseIndex
               ? { background: 'rgb(var(--color-accent))', color: 'rgb(var(--color-fill))' }
               : { background: 'rgb(var(--color-card))', color: 'rgb(var(--color-text-base))' }
           "
@@ -293,23 +205,15 @@ onUnmounted(clearAuto)
           :key="block.id"
           layout
           :initial="{ opacity: 0, scale: 0.6, y: -8 }"
-          :animate="
-            pulseSummary && block.kind === 'summary'
-              ? { opacity: 1, scale: [1, 1.06, 1], y: 0 }
-              : { opacity: 1, scale: 1, y: 0 }
-          "
+          :animate="{ opacity: 1, scale: 1, y: 0 }"
           :exit="{ opacity: 0, scale: 0.6, y: 8 }"
-          :transition="
-            pulseSummary && block.kind === 'summary'
-              ? { duration: 0.7, repeat: Infinity }
-              : { type: 'spring', stiffness: 260, damping: 22 }
-          "
+          :transition="{ type: 'spring', stiffness: 260, damping: 22 }"
           class="flex flex-col items-center justify-center rounded-lg border-2 px-4 py-3 text-center"
           :style="blockStyle(block)"
         >
           <span
             class="text-sm font-semibold"
-            :class="phase === 'exclude' && block.id === OVERFLOW_ID ? 'line-through' : ''"
+            :class="phase === 'summarize' && block.id === OVERFLOW_ID ? 'line-through' : ''"
           >
             {{ block.kind === 'summary' ? '📄 ' : '' }}{{ block.label }}
           </span>
@@ -345,9 +249,9 @@ onUnmounted(clearAuto)
       class="mt-4 min-h-[3rem] text-sm leading-relaxed text-[rgb(var(--color-text-base))]"
     >
       <span class="font-semibold text-[rgb(var(--color-accent))]"
-        >{{ phaseIdx + 1 }}. {{ PHASES[phaseIdx].label }}</span
+        >{{ phaseIndex + 1 }}. {{ PHASES[phaseIndex].label }}</span
       >
-      — {{ PHASES[phaseIdx].caption }}
+      — {{ PHASES[phaseIndex].caption }}
     </p>
   </div>
 </template>

@@ -10,6 +10,8 @@ author: Alexander Opalic
 transition: slide-left
 mdc: true
 download: true
+fonts:
+  hand: 'Caveat'
 layout: cover
 ---
 
@@ -76,11 +78,70 @@ layout: section
 
 ## The Transformation: LLM → Agent
 
-- At the beginning, an LLM is just a text generator
-- One problem: the LLM didn't have access to current news
-- Solution: all providers gave the LLM access to tools
-- With tools, the LLM can now interact with the world
-- This is why an agent is an LLM + Tools + Agentic Loop
+<div class="xd">
+
+<div class="row">
+
+<div class="xd-box b1" v-click="1">
+  <div class="t">LLM</div>
+  <div class="s">just a text<br>generator</div>
+</div>
+
+<div class="op" v-click="2">+</div>
+
+<div class="xd-box b2" v-click="2">
+  <div class="t">Tools</div>
+  <div class="s">read news,<br>call APIs,<br>edit files</div>
+</div>
+
+<div class="op" v-click="3">+</div>
+
+<div class="xd-box b3" v-click="3">
+  <div class="t">Agentic Loop</div>
+  <div class="s">think → act →<br>observe → repeat</div>
+</div>
+
+<div class="op eq" v-click="4">=</div>
+
+<div class="xd-box b4" v-click="4">
+  <div class="t">🤖 Agent</div>
+  <div class="s">interacts with<br>the world</div>
+</div>
+
+</div>
+
+<div class="caption" v-click="5">An LLM can only <em>talk</em>. Give it tools + a loop, and it can <em>do</em>.</div>
+
+</div>
+
+<style>
+.xd { margin-top: 2.2rem; font-family: 'Caveat', 'Comic Sans MS', cursive; }
+.xd .row {
+  display: flex; align-items: center; justify-content: center; gap: 1.1rem;
+}
+.xd-box {
+  border: 2.5px solid #fff;
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  padding: 1rem 1.3rem; text-align: center; min-width: 130px;
+  background: rgba(255,255,255,0.02);
+}
+.xd-box .t { font-size: 1.9rem; font-weight: 700; line-height: 1; }
+.xd-box .s { font-size: 1.15rem; opacity: 0.75; margin-top: 0.45rem; line-height: 1.1; }
+.b1 { transform: rotate(-1deg); }
+.b2 { transform: rotate(1deg); border-color: #ff6bed; }
+.b3 { transform: rotate(-1.2deg); border-color: #ff6bed; }
+.b4 {
+  transform: rotate(0.8deg); border-color: #ff6bed;
+  box-shadow: 0 0 0 4px rgba(255,107,237,0.12);
+}
+.b4 .t { color: #ff6bed; }
+.xd .op { font-size: 2.6rem; font-weight: 700; opacity: 0.85; }
+.xd .op.eq { color: #ff6bed; }
+.xd .caption {
+  margin-top: 2.4rem; text-align: center; font-size: 1.7rem; opacity: 0.85;
+}
+.xd .caption em { color: #ff6bed; font-style: normal; }
+</style>
 
 ---
 layout: image
@@ -255,105 +316,69 @@ Traced from VS Code Copilot Chat agent source (`extensions/copilot/.../summarize
 </div>
 
 ---
-layout: section
+layout: center
 ---
 
-# The Four Types of Memory
+## 🧠 Working memory
 
-What separates a chatbot from an agent
+<div class="text-xl opacity-80 mb-6 max-w-3xl">What's active in your head <em>right now</em> — the sentence you're reading. <span class="opacity-60">Volatile, small.</span></div>
 
----
-
-## Memory is what makes an agent
-
-A chatbot **answers**. An agent answers _shaped by_ what it knows about your project and what it learned last time.
-
-<div class="grid grid-cols-2 gap-6 mt-8 max-w-4xl">
-
-<div class="rounded-lg border border-red-400/40 p-4">
-
-<h3 class="text-red-400 font-bold mb-2">❌ No memory</h3>
-
-We fix a gotcha together → next session the agent makes the **exact same mistake**. Yesterday's context is gone.
-
+<div class="rounded-lg border-2 border-sky-400/50 p-5 max-w-3xl">
+<div class="text-sky-400 font-bold mb-2">In VS Code Copilot</div>
+The chat session's <strong>context window</strong>. Watch the fill meter in the chat box — when it fills, Copilot auto-summarizes, or run <code>/compact</code>. Start a <strong>new session</strong> to reset it.
 </div>
-
-<div class="rounded-lg border border-red-400/40 p-4">
-
-<h3 class="text-red-400 font-bold mb-2">❌ Too much memory</h3>
-
-Dump everything into one giant file so it _can't_ forget → the agent **drowns in noise** and misses what matters.
-
-</div>
-
-</div>
-
-<Callout type="info">
-
-Both are memory problems. And "memory" isn't one thing — the <a href="https://arxiv.org/abs/2309.02427">CoALA framework</a> (Princeton) splits it into **four** types.
-
-</Callout>
 
 ---
 layout: center
 ---
 
-## The human version first
+## 📚 Semantic memory
 
-<div class="grid grid-cols-2 gap-x-10 gap-y-5 mt-6 max-w-4xl text-lg">
+<div class="text-xl opacity-80 mb-6 max-w-3xl">Factual knowledge you just <em>know</em> — "Python is interpreted." <span class="opacity-60">No need to re-learn it.</span></div>
 
-<div><span class="text-sky-400 font-bold">🧠 Working</span> — what's active in your head right now. The sentence you're reading. <span class="opacity-60">Volatile, small.</span></div>
-
-<div><span class="text-green-400 font-bold">📚 Semantic</span> — factual knowledge. "Python is interpreted." <span class="opacity-60">You just know it.</span></div>
-
-<div><span class="text-amber-400 font-bold">🛠️ Procedural</span> — learned skills. Riding a bike. <span class="opacity-60">You don't re-derive it.</span></div>
-
-<div><span class="text-purple-400 font-bold">🎞️ Episodic</span> — personal experience. That 3-hour debug session. <span class="opacity-60">Tied to events you lived.</span></div>
-
+<div class="rounded-lg border-2 border-green-400/50 p-5 max-w-3xl">
+<div class="text-green-400 font-bold mb-2">In VS Code Copilot</div>
+<strong>Custom instructions</strong> — project facts the agent always loads: <code>.github/copilot-instructions.md</code>, <code>AGENTS.md</code>, and scoped <code>*.instructions.md</code> files (with an <code>applyTo</code> glob).
 </div>
 
-<p class="mt-8 text-center opacity-70">Well-designed agents need the same four. CoALA gives them the same names.</p>
+---
+layout: center
+---
+
+## 🛠️ Procedural memory
+
+<div class="text-xl opacity-80 mb-6 max-w-3xl">Learned skills — riding a bike. <span class="opacity-60">You don't re-derive it each time.</span></div>
+
+<div class="rounded-lg border-2 border-amber-400/50 p-5 max-w-3xl">
+<div class="text-amber-400 font-bold mb-2">In VS Code Copilot</div>
+<strong>Agent Skills</strong> — a folder per skill at <code>.github/skills/&lt;name&gt;/SKILL.md</code>. The agent loads one itself when its description matches the task. Portable across Copilot CLI & cloud.
+</div>
+
+---
+layout: center
+---
+
+## 🎞️ Episodic memory
+
+<div class="text-xl opacity-80 mb-6 max-w-3xl">Personal experience — that 3-hour debug session. <span class="opacity-60">Tied to events you lived.</span></div>
+
+<div class="rounded-lg border-2 border-purple-400/50 p-5 max-w-3xl">
+<div class="text-purple-400 font-bold mb-2">In VS Code Copilot</div>
+The <strong>Memory tool</strong> <span class="opacity-60">(preview)</span>. The agent saves notes to <code>/memories/</code> (you) and <code>/memories/repo/</code> (project); the first ~200 lines auto-load each session. Manage via <strong>Chat: Show Memory Files</strong>.
+</div>
 
 ---
 
-## The four types, loading into context
+## Four types of memory — in VS Code Copilot
 
-<FourTypesOfMemory />
-
----
-
-## Claude Code implements all four
-
-Every type maps to plain files and commands — **not** a vector database.
-
-| Memory type | Where it lives in Claude Code | Manage it with |
+| Memory | Human version | In VS Code Copilot |
 | --- | --- | --- |
-| <span class="text-sky-400 font-bold">🧠 Working</span> | The context window | `/context` · `/clear` · `/compact` |
-| <span class="text-green-400 font-bold">📚 Semantic</span> | `CLAUDE.md` hierarchy + `@`-imports | Edit the files |
-| <span class="text-amber-400 font-bold">🛠️ Procedural</span> | Skills (`SKILL.md`) + progressive disclosure | Author by hand in `.claude/skills/` |
-| <span class="text-purple-400 font-bold">🎞️ Episodic</span> | Auto memory (distilled notes) + Dreams | `/memory` |
+| <span class="text-sky-400 font-bold">🧠 Working</span> | What's in your head now | Context window · `/compact` · new session |
+| <span class="text-green-400 font-bold">📚 Semantic</span> | Facts you just know | `.github/copilot-instructions.md` · `AGENTS.md` · `*.instructions.md` |
+| <span class="text-amber-400 font-bold">🛠️ Procedural</span> | Learned skills | Agent Skills — `.github/skills/<name>/SKILL.md` |
+| <span class="text-purple-400 font-bold">🎞️ Episodic</span> | Lived experiences | Memory tool (preview) — `/memories/` · "Show Memory Files" |
 
-<p class="mt-4 opacity-70 text-sm">Semantic & procedural are Markdown <em>you</em> write. Episodic is Markdown the <em>agent</em> writes for itself.</p>
-
----
-
-## Not every agent needs all four
-
-<div class="max-w-4xl mt-4">
-
-| Agent | 🧠 Working | 📚 Semantic | 🛠️ Procedural | 🎞️ Episodic |
-| --- | :---: | :---: | :---: | :---: |
-| Simple reflex (thermostat, router) | ✅ | | | |
-| Narrow support agent (password reset) | ✅ | | ✅ | |
-| **Coding agent** | ✅ | ✅ | ✅ | ✅ |
-
-</div>
-
-<Callout type="info">
-
-Add the types the **job** needs. A thermostat needs one. A coding agent is the rare case that wants all four. Forcing extra types on a simple agent just adds cost and noise.
-
-</Callout>
+<p class="mt-6 opacity-70">Semantic & procedural are Markdown <em>you</em> write. Episodic is Markdown the <em>agent</em> writes for itself.</p>
 
 ---
 layout: section
@@ -1162,12 +1187,6 @@ npx skills add https://github.com/simonwong/agent-skills --skill code-simplifier
 Browse and discover skills at [agentskills.io](https://agentskills.io/)
 
 ---
-layout: section
----
-
-# Key Takeaways
-
----
 layout: center
 ---
 
@@ -1179,20 +1198,6 @@ layout: center
 4. **Subagents** — specialized agents for complex tasks
 5. **Skills** — portable workflows that load on demand
 6. **Hooks** — deterministic guardrails (keep secrets out of context!)
-
----
-layout: end
----
-
-# Thank You!
-
-Questions?
-
----
-layout: section
----
-
-# Resources
 
 ---
 
@@ -1211,3 +1216,36 @@ layout: section
 - [Don't Waste Your Back Pressure](https://banay.me/dont-waste-your-backpressure/) — Why automated feedback loops make agents more effective
 - [Workshop Solution](https://github.com/alexanderop/workshop) — Complete code examples from this workshop
 - [Learn Prompt](https://alexop.dev/prompts/claude/claude-learn-command/) — Skill that helps agents learn from conversations
+
+---
+layout: end
+class: text-center
+---
+
+# Thank You! 🙏
+
+<div class="text-2xl opacity-80 mt-2">Questions?</div>
+
+<div class="flex items-center justify-center gap-12 mt-12">
+
+<div class="text-left">
+
+### Want to read more about AI?
+
+<div class="text-xl opacity-90 mt-3">
+Tutorials, deep dives & experiments on my blog:
+</div>
+
+<a href="https://alexop.dev/tags/ai/" class="text-2xl font-mono mt-4 inline-block">
+alexop.dev/tags/ai
+</a>
+
+</div>
+
+<div class="bg-white p-4 rounded-2xl shadow-lg">
+  <img src="/blog-ai-qr.png" class="w-52 h-52" alt="QR code to alexop.dev/tags/ai" />
+</div>
+
+</div>
+
+<div class="text-lg opacity-60 mt-12">Alexander Opalic</div>
