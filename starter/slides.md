@@ -21,12 +21,19 @@ by Alexander Opalic
 layout: center
 ---
 
-## Quick heads-up 👋
+# Quick heads-up 👋
 
-- This one's a bit more **spontaneous** — I jumped in as a short-notice replacement
-- It's also my **first time giving two talks back-to-back** at a conference
-- So if something isn't 100% perfect, **please bear with me** 🙏
-- Let's have some fun and dive in!
+<div class="max-w-2xl mx-auto text-left space-y-5 mt-10 text-xl leading-relaxed">
+
+<div>👉&nbsp; This one's a bit more **spontaneous** — I jumped in as a short-notice replacement</div>
+
+<div>👉&nbsp; It's also my **first time giving two talks back-to-back** at a conference</div>
+
+<div>👉&nbsp; So if something isn't 100% perfect, **please bear with me** 🙏</div>
+
+<div>👉&nbsp; Let's have some fun and **dive in!**</div>
+
+</div>
 
 ---
 layout: image
@@ -36,7 +43,7 @@ backgroundSize: contain
 
 ---
 
-## Workshop Outline
+## Talk Outline
 
 1. What is an Agent? (LLM → Agent transformation)
 2. Context Engineering (the real skill)
@@ -234,6 +241,119 @@ From [Anthropic's guide](https://www.anthropic.com/engineering/effective-context
 1. **Compaction** — Summarize history, reset periodically
 2. **Structured note-taking** — External memory systems
 3. **Sub-agent architectures** — Distribute work across focused contexts
+
+---
+
+## How Compaction Actually Works
+
+<CompactionMechanism />
+
+<div class="text-xs opacity-50 mt-2">
+
+Traced from VS Code Copilot Chat agent source (`extensions/copilot/.../summarizedConversationHistory.tsx`)
+
+</div>
+
+---
+layout: section
+---
+
+# The Four Types of Memory
+
+What separates a chatbot from an agent
+
+---
+
+## Memory is what makes an agent
+
+A chatbot **answers**. An agent answers _shaped by_ what it knows about your project and what it learned last time.
+
+<div class="grid grid-cols-2 gap-6 mt-8 max-w-4xl">
+
+<div class="rounded-lg border border-red-400/40 p-4">
+
+<h3 class="text-red-400 font-bold mb-2">❌ No memory</h3>
+
+We fix a gotcha together → next session the agent makes the **exact same mistake**. Yesterday's context is gone.
+
+</div>
+
+<div class="rounded-lg border border-red-400/40 p-4">
+
+<h3 class="text-red-400 font-bold mb-2">❌ Too much memory</h3>
+
+Dump everything into one giant file so it _can't_ forget → the agent **drowns in noise** and misses what matters.
+
+</div>
+
+</div>
+
+<Callout type="info">
+
+Both are memory problems. And "memory" isn't one thing — the <a href="https://arxiv.org/abs/2309.02427">CoALA framework</a> (Princeton) splits it into **four** types.
+
+</Callout>
+
+---
+layout: center
+---
+
+## The human version first
+
+<div class="grid grid-cols-2 gap-x-10 gap-y-5 mt-6 max-w-4xl text-lg">
+
+<div><span class="text-sky-400 font-bold">🧠 Working</span> — what's active in your head right now. The sentence you're reading. <span class="opacity-60">Volatile, small.</span></div>
+
+<div><span class="text-green-400 font-bold">📚 Semantic</span> — factual knowledge. "Python is interpreted." <span class="opacity-60">You just know it.</span></div>
+
+<div><span class="text-amber-400 font-bold">🛠️ Procedural</span> — learned skills. Riding a bike. <span class="opacity-60">You don't re-derive it.</span></div>
+
+<div><span class="text-purple-400 font-bold">🎞️ Episodic</span> — personal experience. That 3-hour debug session. <span class="opacity-60">Tied to events you lived.</span></div>
+
+</div>
+
+<p class="mt-8 text-center opacity-70">Well-designed agents need the same four. CoALA gives them the same names.</p>
+
+---
+
+## The four types, loading into context
+
+<FourTypesOfMemory />
+
+---
+
+## Claude Code implements all four
+
+Every type maps to plain files and commands — **not** a vector database.
+
+| Memory type | Where it lives in Claude Code | Manage it with |
+| --- | --- | --- |
+| <span class="text-sky-400 font-bold">🧠 Working</span> | The context window | `/context` · `/clear` · `/compact` |
+| <span class="text-green-400 font-bold">📚 Semantic</span> | `CLAUDE.md` hierarchy + `@`-imports | Edit the files |
+| <span class="text-amber-400 font-bold">🛠️ Procedural</span> | Skills (`SKILL.md`) + progressive disclosure | Author by hand in `.claude/skills/` |
+| <span class="text-purple-400 font-bold">🎞️ Episodic</span> | Auto memory (distilled notes) + Dreams | `/memory` |
+
+<p class="mt-4 opacity-70 text-sm">Semantic & procedural are Markdown <em>you</em> write. Episodic is Markdown the <em>agent</em> writes for itself.</p>
+
+---
+
+## Not every agent needs all four
+
+<div class="max-w-4xl mt-4">
+
+| Agent | 🧠 Working | 📚 Semantic | 🛠️ Procedural | 🎞️ Episodic |
+| --- | :---: | :---: | :---: | :---: |
+| Simple reflex (thermostat, router) | ✅ | | | |
+| Narrow support agent (password reset) | ✅ | | ✅ | |
+| **Coding agent** | ✅ | ✅ | ✅ | ✅ |
+
+</div>
+
+<Callout type="info">
+
+Add the types the **job** needs. A thermostat needs one. A coding agent is the rare case that wants all four. Forcing extra types on a simple agent just adds cost and noise.
+
+</Callout>
 
 ---
 layout: section
@@ -448,6 +568,21 @@ Click **Start** to see how the main agent delegates file search to a specialized
 />
 
 Click **Start** to see the fan-out/fan-in pattern where multiple subagents search in parallel.
+
+---
+
+## Nested Subagents: Orchestrator Pattern
+
+<NestedSubagentDiagram
+  task="Build user authentication"
+  :criteria="[
+    { id: 'AC1', title: 'Login form', icon: '🎨', color: '#3b82f6' },
+    { id: 'AC2', title: 'Auth API', icon: '🔌', color: '#8b5cf6' },
+    { id: 'AC3', title: 'Unit tests', icon: '🧪', color: '#10b981' }
+  ]"
+/>
+
+Main chat writes a **`spec.md`**, hands it to an **Orchestrator** subagent, which spawns one **implementation subagent per acceptance criterion**.
 
 ---
 
