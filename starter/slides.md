@@ -9,7 +9,6 @@ info: |
 author: Alexander Opalic
 transition: slide-left
 mdc: true
-download: true
 fonts:
   hand: 'Caveat'
 layout: cover
@@ -18,6 +17,11 @@ layout: cover
 # Mastering the Basics: Agents, Subagents, Skills & Hooks in VS Code Copilot
 
 by Alexander Opalic
+
+<div class="abs-br mr-10 mb-16 flex flex-col items-center gap-2">
+  <img src="/slides-qr.svg" class="w-36 h-36 rounded-lg bg-white p-2" alt="Scan to open these slides" />
+  <div class="text-sm opacity-80">📱 Scan to follow along</div>
+</div>
 
 ---
 layout: center
