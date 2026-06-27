@@ -80,6 +80,9 @@ importers:
       '@alexop/slidev-theme-brand':
         specifier: workspace:*
         version: link:../packages/slidev-theme-brand
+      motion-v:
+        specifier: ^2.3.0
+        version: 2.3.0(@vueuse/core@14.2.1(vue@3.5.29(typescript@5.9.3)))(react@19.2.0)(vue@3.5.29(typescript@5.9.3))
     devDependencies:
       '@slidev/cli':
         specifier: ^52.13.0
@@ -1916,6 +1919,20 @@ packages:
       '@nuxt/kit':
         optional: true
 
+  framer-motion@12.42.0:
+    resolution: {integrity: sha512-wp7EJnfWaaEScVygKv3e20udoRz+LbtxScsuTkakAxfXmt+ReC6WyPW2nINRAGvd+hG9odwcjBLyOTPjH5pBRA==}
+    peerDependencies:
+      '@emotion/is-prop-valid': '*'
+      react: ^18.0.0 || ^19.0.0
+      react-dom: ^18.0.0 || ^19.0.0
+    peerDependenciesMeta:
+      '@emotion/is-prop-valid':
+        optional: true
+      react:
+        optional: true
+      react-dom:
+        optional: true
+
   framesync@6.1.2:
     resolution: {integrity: sha512-jBTqhX6KaQVDyus8muwZbBeGGP0XgujBRbQ7gM7BRdS3CadCZIHiawyzYLnafYcvZIh5j8WE7cxZKFn7dXhu9g==}
 
@@ -2406,6 +2423,18 @@ packages:
 
   monaco-editor@0.55.1:
     resolution: {integrity: sha512-jz4x+TJNFHwHtwuV9vA9rMujcZRb0CEilTEwG2rRSpe/A7Jdkuj8xPKttCgOh+v/lkHy7HsZ64oj+q3xoAFl9A==}
+
+  motion-dom@12.42.0:
+    resolution: {integrity: sha512-M63h4n8R+quJdNhBwuLlgxM+OLYa9+I/T2pzDRboB9fLXRdbou+Gw7Zury+SkpaCyACP1JHSjHgZ1EgTkBr30w==}
+
+  motion-utils@12.39.0:
+    resolution: {integrity: sha512-8nadJAJjTtqRkmRF36FoJTrywK9nnFmnPwnSMyxaOCU7GDjN9RTMJIxx9De8ErM+vpPhMccr/6fo5WciyQLnMQ==}
+
+  motion-v@2.3.0:
+    resolution: {integrity: sha512-J0CCfXtICCni9RjotDUBOs57xNpYI9yyBSohEOxaRHrmjwOtlw291fhRu/mdgEdSasys96R028YDDOAtWBbRaA==}
+    peerDependencies:
+      '@vueuse/core': '>=10.0.0'
+      vue: '>=3.0.0'
 
   mrmime@2.0.1:
     resolution: {integrity: sha512-Y3wQdFg2Va6etvQ5I82yUhGdsKrcYox6p7FfL1LbK2J4V01F9TGlepTIhnK24t7koZibmg82KGglhA1XK5IsLQ==}
@@ -5349,6 +5378,14 @@ snapshots:
     optionalDependencies:
       '@nuxt/kit': 3.19.3
 
+  framer-motion@12.42.0(react@19.2.0):
+    dependencies:
+      motion-dom: 12.42.0
+      motion-utils: 12.39.0
+      tslib: 2.4.0
+    optionalDependencies:
+      react: 19.2.0
+
   framesync@6.1.2:
     dependencies:
       tslib: 2.4.0
@@ -5961,6 +5998,25 @@ snapshots:
     dependencies:
       dompurify: 3.4.11
       marked: 14.0.0
+
+  motion-dom@12.42.0:
+    dependencies:
+      motion-utils: 12.39.0
+
+  motion-utils@12.39.0: {}
+
+  motion-v@2.3.0(@vueuse/core@14.2.1(vue@3.5.29(typescript@5.9.3)))(react@19.2.0)(vue@3.5.29(typescript@5.9.3)):
+    dependencies:
+      '@vueuse/core': 14.2.1(vue@3.5.29(typescript@5.9.3))
+      framer-motion: 12.42.0(react@19.2.0)
+      hey-listen: 1.0.8
+      motion-dom: 12.42.0
+      motion-utils: 12.39.0
+      vue: 3.5.29(typescript@5.9.3)
+    transitivePeerDependencies:
+      - '@emotion/is-prop-valid'
+      - react
+      - react-dom
 
   mrmime@2.0.1: {}
 
