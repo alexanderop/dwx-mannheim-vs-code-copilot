@@ -11,6 +11,12 @@ transition: slide-left
 mdc: true
 fonts:
   hand: 'Caveat'
+layout: image
+image: /dwx-2026-cover.png
+backgroundSize: contain
+---
+
+---
 layout: cover
 ---
 
@@ -70,7 +76,7 @@ layout: center
 
 # About me
 
-<About />
+<About image="/alex-speaking.png" />
 
 ---
 layout: section
@@ -82,70 +88,7 @@ layout: section
 
 ## The Transformation: LLM → Agent
 
-<div class="xd">
-
-<div class="row">
-
-<div class="xd-box b1" v-click="1">
-  <div class="t">LLM</div>
-  <div class="s">just a text<br>generator</div>
-</div>
-
-<div class="op" v-click="2">+</div>
-
-<div class="xd-box b2" v-click="2">
-  <div class="t">Tools</div>
-  <div class="s">read news,<br>call APIs,<br>edit files</div>
-</div>
-
-<div class="op" v-click="3">+</div>
-
-<div class="xd-box b3" v-click="3">
-  <div class="t">Agentic Loop</div>
-  <div class="s">think → act →<br>observe → repeat</div>
-</div>
-
-<div class="op eq" v-click="4">=</div>
-
-<div class="xd-box b4" v-click="4">
-  <div class="t">🤖 Agent</div>
-  <div class="s">interacts with<br>the world</div>
-</div>
-
-</div>
-
-<div class="caption" v-click="5">An LLM can only <em>talk</em>. Give it tools + a loop, and it can <em>do</em>.</div>
-
-</div>
-
-<style>
-.xd { margin-top: 2.2rem; font-family: 'Caveat', 'Comic Sans MS', cursive; }
-.xd .row {
-  display: flex; align-items: center; justify-content: center; gap: 1.1rem;
-}
-.xd-box {
-  border: 2.5px solid #fff;
-  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
-  padding: 1rem 1.3rem; text-align: center; min-width: 130px;
-  background: rgba(255,255,255,0.02);
-}
-.xd-box .t { font-size: 1.9rem; font-weight: 700; line-height: 1; }
-.xd-box .s { font-size: 1.15rem; opacity: 0.75; margin-top: 0.45rem; line-height: 1.1; }
-.b1 { transform: rotate(-1deg); }
-.b2 { transform: rotate(1deg); border-color: #ff6bed; }
-.b3 { transform: rotate(-1.2deg); border-color: #ff6bed; }
-.b4 {
-  transform: rotate(0.8deg); border-color: #ff6bed;
-  box-shadow: 0 0 0 4px rgba(255,107,237,0.12);
-}
-.b4 .t { color: #ff6bed; }
-.xd .op { font-size: 2.6rem; font-weight: 700; opacity: 0.85; }
-.xd .op.eq { color: #ff6bed; }
-.xd .caption {
-  margin-top: 2.4rem; text-align: center; font-size: 1.7rem; opacity: 0.85;
-}
-.xd .caption em { color: #ff6bed; font-style: normal; }
-</style>
+<AgentFormula />
 
 ---
 layout: image
@@ -323,53 +266,69 @@ Traced from VS Code Copilot Chat agent source (`extensions/copilot/.../summarize
 layout: center
 ---
 
-## 🧠 Working memory
+<MemorySlide
+  icon="🧠"
+  title="Working memory"
+  accent-class="text-sky-400"
+  border-class="border-sky-400/50"
+>
+<template #description>
+What's active in your head <em>right now</em> — the sentence you're reading. <span class="opacity-60">Volatile, small.</span>
+</template>
 
-<div class="text-xl opacity-80 mb-6 max-w-3xl">What's active in your head <em>right now</em> — the sentence you're reading. <span class="opacity-60">Volatile, small.</span></div>
-
-<div class="rounded-lg border-2 border-sky-400/50 p-5 max-w-3xl">
-<div class="text-sky-400 font-bold mb-2">In VS Code Copilot</div>
 The chat session's <strong>context window</strong>. Watch the fill meter in the chat box — when it fills, Copilot auto-summarizes, or run <code>/compact</code>. Start a <strong>new session</strong> to reset it.
-</div>
+</MemorySlide>
 
 ---
 layout: center
 ---
 
-## 📚 Semantic memory
+<MemorySlide
+  icon="📚"
+  title="Semantic memory"
+  accent-class="text-green-400"
+  border-class="border-green-400/50"
+>
+<template #description>
+Factual knowledge you just <em>know</em> — "Python is interpreted." <span class="opacity-60">No need to re-learn it.</span>
+</template>
 
-<div class="text-xl opacity-80 mb-6 max-w-3xl">Factual knowledge you just <em>know</em> — "Python is interpreted." <span class="opacity-60">No need to re-learn it.</span></div>
-
-<div class="rounded-lg border-2 border-green-400/50 p-5 max-w-3xl">
-<div class="text-green-400 font-bold mb-2">In VS Code Copilot</div>
 <strong>Custom instructions</strong> — project facts the agent always loads: <code>.github/copilot-instructions.md</code>, <code>AGENTS.md</code>, and scoped <code>*.instructions.md</code> files (with an <code>applyTo</code> glob).
-</div>
+</MemorySlide>
 
 ---
 layout: center
 ---
 
-## 🛠️ Procedural memory
+<MemorySlide
+  icon="🛠️"
+  title="Procedural memory"
+  accent-class="text-amber-400"
+  border-class="border-amber-400/50"
+>
+<template #description>
+Learned skills — riding a bike. <span class="opacity-60">You don't re-derive it each time.</span>
+</template>
 
-<div class="text-xl opacity-80 mb-6 max-w-3xl">Learned skills — riding a bike. <span class="opacity-60">You don't re-derive it each time.</span></div>
-
-<div class="rounded-lg border-2 border-amber-400/50 p-5 max-w-3xl">
-<div class="text-amber-400 font-bold mb-2">In VS Code Copilot</div>
 <strong>Agent Skills</strong> — a folder per skill at <code>.github/skills/&lt;name&gt;/SKILL.md</code>. The agent loads one itself when its description matches the task. Portable across Copilot CLI & cloud.
-</div>
+</MemorySlide>
 
 ---
 layout: center
 ---
 
-## 🎞️ Episodic memory
+<MemorySlide
+  icon="🎞️"
+  title="Episodic memory"
+  accent-class="text-purple-400"
+  border-class="border-purple-400/50"
+>
+<template #description>
+Personal experience — that 3-hour debug session. <span class="opacity-60">Tied to events you lived.</span>
+</template>
 
-<div class="text-xl opacity-80 mb-6 max-w-3xl">Personal experience — that 3-hour debug session. <span class="opacity-60">Tied to events you lived.</span></div>
-
-<div class="rounded-lg border-2 border-purple-400/50 p-5 max-w-3xl">
-<div class="text-purple-400 font-bold mb-2">In VS Code Copilot</div>
 The <strong>Memory tool</strong> <span class="opacity-60">(preview)</span>. The agent saves notes to <code>/memories/</code> (you) and <code>/memories/repo/</code> (project); the first ~200 lines auto-load each session. Manage via <strong>Chat: Show Memory Files</strong>.
-</div>
+</MemorySlide>
 
 ---
 
@@ -826,34 +785,7 @@ Also catch the **indirect** path — `cat .env` / `printenv` live in `tool_input
 
 ## ...And Plenty More Ideas 💡
 
-<div grid="~ cols-2 gap-x-8" class="text-sm">
-
-<div>
-
-**Quality & safety gates**
-- 🟢 **Loop until green** (`Stop`) — refuse to finish while tests fail
-- 🚫 **Pre-commit gate** (`PreToolUse`) — no commit if lint fails
-- 📦 **Dependency guard** — block un-reviewed prod installs
-
-</div>
-
-<div>
-
-**Observability & control**
-- 📜 **Audit log** (`PostToolUse`) — every tool call on record
-- 🛡️ **Prompt governance** (`UserPromptSubmit`) — catch secrets / PII
-- 💾 **Backup before compaction** (`PreCompact`)
-- 🌐 **Central policy server** (HTTP hook) — one rule set, whole team
-
-</div>
-
-</div>
-
-<Callout type="info">
-
-The point isn't the list — it's that **anything you can script, you can enforce**.
-
-</Callout>
+<HookIdeas />
 
 ---
 layout: center
@@ -1230,26 +1162,6 @@ class: text-center
 
 <div class="text-2xl opacity-80 mt-2">Questions?</div>
 
-<div class="flex items-center justify-center gap-12 mt-12">
-
-<div class="text-left">
-
-### Want to read more about AI?
-
-<div class="text-xl opacity-90 mt-3">
-Tutorials, deep dives & experiments on my blog:
-</div>
-
-<a href="https://alexop.dev/tags/ai/" class="text-2xl font-mono mt-4 inline-block">
-alexop.dev/tags/ai
-</a>
-
-</div>
-
-<div class="bg-white p-4 rounded-2xl shadow-lg">
-  <img src="/blog-ai-qr.png" class="w-52 h-52" alt="QR code to alexop.dev/tags/ai" />
-</div>
-
-</div>
+<BlogQrCta />
 
 <div class="text-lg opacity-60 mt-12">Alexander Opalic</div>

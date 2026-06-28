@@ -1,7 +1,13 @@
+<script setup lang="ts">
+defineProps<{
+  image?: string
+}>()
+</script>
+
 <template>
   <div class="grid grid-cols-2 gap-8 h-full">
     <div class="flex flex-col justify-center items-center">
-      <img class="w-75 rounded-full" src="https://avatars.githubusercontent.com/u/33398393?v=4" />
+      <img class="w-75 rounded-full" :src="image ?? 'https://avatars.githubusercontent.com/u/33398393?v=4'" />
       <h2 class="mt-4">Alex Opalic</h2>
     </div>
     <div>
