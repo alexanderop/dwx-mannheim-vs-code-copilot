@@ -699,16 +699,7 @@ Instructions *ask* the agent nicely. Hooks **enforce** — block a command, form
 
 ## How a Hook Works
 
-```mermaid {scale: 0.7}
-flowchart LR
-  A[Agent wants<br/>to use a tool] --> B[PreToolUse hook]
-  B -->|JSON on stdin| C[Your script]
-  C -->|allow| D[Tool runs]
-  C -->|deny / ask| E[Blocked or<br/>needs approval]
-  D --> F[PostToolUse hook<br/>format / lint / test]
-```
-
-**Exit codes:** `0` = success (parse stdout) · `2` = block & tell the model why · other = warn, continue
+<HookFlowDiagram class="mt-8" />
 
 ---
 
@@ -772,6 +763,14 @@ Also catch the **indirect** path — `cat .env` / `printenv` live in `tool_input
 
 ---
 
+<DemoVideo
+  title="The .env guard in action"
+  src="/videos/env-hook-guard.mp4"
+  caption="PreToolUse denies the .env read — direct and via the terminal — while a normal source file passes through."
+/>
+
+---
+
 ## More High-Value Hooks
 
 - 🛑 **Block destructive commands** (`PreToolUse`) — `rm -rf /`, `git push --force`, `DROP TABLE`
@@ -793,15 +792,63 @@ layout: center
 
 ## Recommended Starting Set
 
-1. 🔒 **Secret-file guard** — keep `.env` out of context
-2. 🛑 **Dangerous-command guard** — block the catastrophic shell call
-3. 🎨 **Auto-format on edit** — consistent tree, no nagging
+<div class="text-sm opacity-60 mb-6">Three pure-win safety &amp; quality rails — start here.</div>
+
+<div grid="~ cols-3 gap-5" class="items-stretch starting-set">
+  <div class="relative">
+    <span class="step-badge">1</span>
+    <FeatureCard icon="🔒" title="Secret-file guard" description="Keep .env and credentials out of the agent's context — it can't leak what it never sees." />
+  </div>
+  <div class="relative">
+    <span class="step-badge">2</span>
+    <FeatureCard icon="🛑" title="Dangerous-command guard" description="Block the catastrophic shell call before it runs. One rule, zero rm -rf surprises." />
+  </div>
+  <div class="relative">
+    <span class="step-badge">3</span>
+    <FeatureCard icon="🎨" title="Auto-format on edit" description="Consistent tree on every write — no nagging, no diff noise, no style debates." />
+  </div>
+</div>
 
 <Callout type="info">
 
-Pure-win safety & quality rails. Tip: bundle the guards into **one `PreToolUse` script** — it already parsed stdin.
+Tip: bundle all three into <strong>one <code>PreToolUse</code> script</strong> — it already parsed stdin.
 
 </Callout>
+
+<style scoped>
+.starting-set > div { display: flex; }
+.starting-set :deep(.feature-card) {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.starting-set :deep(.feature-card h3) {
+  font-size: 1.15rem;
+  min-height: 2.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.starting-set :deep(.feature-card .text-5xl) { text-align: center; }
+.step-badge {
+  position: absolute;
+  top: -0.6rem;
+  left: -0.6rem;
+  z-index: 10;
+  width: 1.9rem;
+  height: 1.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: #ff6bed;
+  color: #1a1a1a;
+  font-weight: 700;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 12px -2px rgba(255, 107, 237, 0.5);
+}
+</style>
 
 ---
 layout: section

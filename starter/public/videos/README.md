@@ -6,6 +6,7 @@ the placeholder frame for a real video player automatically (no code change).
 
 | File | Slide / task |
 | --- | --- |
+| `env-hook-guard.mp4` | The `.env` PreToolUse guard denying secret reads — auto-generated via VHS (see `tools/env-hook/`) |
 | `hello-skill.mp4` | Create the `hello` skill, then type "alex" in chat |
 | `install-skill-creator.mp4` | `npx skills add … --skill skill-creator` |
 | `vue-ai-assistant.mp4` | Generate the `vue-ai-assistant` skill + ask a Vue question |
