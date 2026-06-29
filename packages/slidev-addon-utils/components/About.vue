@@ -13,7 +13,7 @@ defineProps<{
     <div>
       <VClicks class="space-y-2 mt-10 text-xl">
         <ul>
-          <li>🚀 7 years building with Vue</li>
+          <li>🚀 8 years building with Vue</li>
           <li>💼 Developer at Otto Payments</li>
           <li>🏡 Based in Geretsried (south of Munich, Bavaria)</li>
           <li>✍️ Blogger at alexop.dev</li>

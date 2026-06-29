@@ -57,14 +57,7 @@ backgroundSize: contain
 
 ## Talk Outline
 
-1. What is an Agent? (LLM → Agent transformation)
-2. Context Engineering (the real skill)
-3. Back Pressure (core validation concept)
-4. AGENTS.md (open standard)
-5. Subagents (specialized invocation)
-6. Skills (portable workflows)
-7. Hooks (deterministic control)
-8. Live Demo
+<OutlineRoadmap />
 
 ---
 layout: center
@@ -121,9 +114,37 @@ nanocode | claude-opus-4-5 | /Users/alexanderopalic/Projects/typescript/nanocode
 
 ---
 
+<DemoVideo
+  title="The agent loop, live"
+  src="/videos/agentic-loop.mp4"
+  caption="One prompt → tool call → results fed back → loop → done. The recursion is the agent."
+/>
+
+---
+
 ## The Agentic Loop (Code)
 
+````md magic-move {lines: true}
 ```typescript
+// 1. An LLM is just: messages in → response out
+async function agentLoop(messages: Message[], systemPrompt: string) {
+  const response = await callApi(messages, systemPrompt)
+  printResponse(response)
+}
+```
+
+```typescript
+// 2. Let it DO things — run the tools it asked for
+async function agentLoop(messages: Message[], systemPrompt: string) {
+  const response = await callApi(messages, systemPrompt)
+  printResponse(response)
+
+  const toolResults = await processToolCalls(response.content)
+}
+```
+
+```typescript
+// 3. No tools requested? The turn is over.
 async function agentLoop(messages: Message[], systemPrompt: string): Promise<Message[]> {
   const response = await callApi(messages, systemPrompt)
   printResponse(response)
@@ -132,17 +153,37 @@ async function agentLoop(messages: Message[], systemPrompt: string): Promise<Mes
   const newMessages = [...messages, { role: 'assistant', content: response.content }]
 
   if (toolResults.length === 0) {
-    return newMessages  // No tools called, we're done
+    return newMessages // we're done
+  }
+}
+```
+
+```typescript {14-17}
+// 4. Feed results back & call yourself — THIS is the agent 🔁
+async function agentLoop(messages: Message[], systemPrompt: string): Promise<Message[]> {
+  const response = await callApi(messages, systemPrompt)
+  printResponse(response)
+
+  const toolResults = await processToolCalls(response.content)
+  const newMessages = [...messages, { role: 'assistant', content: response.content }]
+
+  if (toolResults.length === 0) {
+    return newMessages // we're done
   }
 
-  return agentLoop(  // Loop again with tool results
+  return agentLoop(
     [...newMessages, { role: 'user', content: toolResults }],
     systemPrompt
   )
 }
 ```
+````
 
-The entire request → response → execute → loop cycle in ~15 lines.
+<v-click>
+
+The entire request → response → execute → **loop** cycle in ~15 lines. An LLM becomes an agent the moment it can call its own results back.
+
+</v-click>
 
 ---
 
@@ -205,6 +246,14 @@ backgroundSize: contain
 - ≡ **todo** — Manage and track todo items
 - ✕ **vscode** — Use VS Code features
 - 🌐 **web** — Fetch information from the web
+
+---
+
+<DemoVideo
+  title="Ask the agent what it can do"
+  src="/videos/copilot-cli-tools.mp4"
+  caption="The Copilot CLI lists the tools available from its system context — shell, file inspection, editing, execution, web/GitHub, and agents."
+/>
 
 ---
 layout: section
@@ -645,6 +694,14 @@ The agent reads `skill.md` first. Reference docs load only when needed.
 5. Returns specific fixes based on real content
 
 **Key:** Data shows symptoms. Content shows causes.
+
+---
+
+<DemoVideo
+  title="The Plausible SEO skill at work"
+  src="/videos/skill-in-action.mp4"
+  caption="Description match → skill.md loads → CLI script runs → reference doc → WebFetch → specific fixes."
+/>
 
 ---
 layout: section
