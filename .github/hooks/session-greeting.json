@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "hooks": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "bash .github/hooks/scripts/session-greeting.sh",
+        "bash": "bash .github/hooks/scripts/session-greeting.sh",
+        "timeoutSec": 10
+      }
+    ]
+  }
+}

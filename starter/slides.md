@@ -61,12 +61,6 @@ backgroundSize: contain
 
 ---
 layout: center
----
-
-## 🙋 Who has used GitHub Copilot in VS Code?
-
----
-layout: center
 class: 'text-center'
 ---
 
@@ -324,18 +318,6 @@ From [Anthropic's guide](https://www.anthropic.com/engineering/effective-context
 
 ---
 
-## How Compaction Actually Works
-
-<CompactionMechanism />
-
-<div class="text-xs opacity-50 mt-2">
-
-Traced from VS Code Copilot Chat agent source (`extensions/copilot/.../summarizedConversationHistory.tsx`)
-
-</div>
-
----
-
 ## Where Exactly Does It Cut?
 
 <CompactionCutPoint />
@@ -426,41 +408,6 @@ The <strong>Memory tool</strong> <span class="opacity-60">(preview)</span>. The 
 | <span class="text-purple-400 font-bold">🎞️ Episodic</span> | Lived experiences | Memory tool (preview) — `/memories/` · "Show Memory Files" |
 
 <p class="mt-6 opacity-70">Semantic & procedural are Markdown <em>you</em> write. Episodic is Markdown the <em>agent</em> writes for itself.</p>
-
----
-layout: section
----
-
-# Back Pressure
-
----
-
-## Why Back Pressure Matters
-
-**Back pressure** = automated feedback that validates agent work
-
-- Without back pressure, **you** become the validation layer
-- Agents cannot self-correct if nothing tells them something is wrong
-- With good back pressure, agents detect mistakes and iterate until correct
-
-> "If you're directly responsible for checking each line is valid, that's time taken away from higher-level goals."
-
----
-
-## Back Pressure Sources
-
-| Source | What It Validates |
-|--------|-------------------|
-| **Type system** | Types, interfaces, contracts |
-| **Build tools** | Syntax, imports, compilation |
-| **Tests** | Logic, behavior, regressions |
-| **Linters** | Style, patterns, best practices |
-
-<Callout type="info">
-
-**Key insight:** Expressive type systems + good error messages = agents can self-correct.
-
-</Callout>
 
 ---
 layout: section
@@ -597,6 +544,41 @@ After approval, save the learning.
 layout: section
 ---
 
+# Back Pressure
+
+---
+
+## Why Back Pressure Matters
+
+**Back pressure** = automated feedback that validates agent work
+
+- Without back pressure, **you** become the validation layer
+- Agents cannot self-correct if nothing tells them something is wrong
+- With good back pressure, agents detect mistakes and iterate until correct
+
+> "If you're directly responsible for checking each line is valid, that's time taken away from higher-level goals."
+
+---
+
+## Back Pressure Sources
+
+| Source | What It Validates |
+|--------|-------------------|
+| **Type system** | Types, interfaces, contracts |
+| **Build tools** | Syntax, imports, compilation |
+| **Tests** | Logic, behavior, regressions |
+| **Linters** | Style, patterns, best practices |
+
+<Callout type="info">
+
+**Key insight:** Expressive type systems + good error messages = agents can self-correct.
+
+</Callout>
+
+---
+layout: section
+---
+
 # Subagents
 
 ---
@@ -618,6 +600,8 @@ layout: section
 - TDD workflows (test generation, validation)
 - Multi-step processes (research, summarize, act)
 
+---
+hideFooter: true
 ---
 
 ## Explore Subagent Flow
@@ -852,14 +836,6 @@ echo '{"continue":true}'
 Also catch the **indirect** path — `cat .env` / `printenv` live in `tool_input.command`, not just file-read tools.
 
 </Callout>
-
----
-
-<DemoVideo
-  title="The .env guard in action"
-  src="/videos/env-hook-guard.mp4"
-  caption="PreToolUse denies the .env read — direct and via the terminal — while a normal source file passes through."
-/>
 
 ---
 
@@ -1208,6 +1184,32 @@ Update the excalidraw skill to use these brand colors:
 ```
 
 → Agent modifies the skill's SKILL.md to include color instructions
+
+---
+
+## Live Action: A `SessionStart` Hook
+
+**The problem:** the model has no clock and no thermometer — it can't tell you the time or the weather.
+
+**Prompt to build it live:**
+
+```
+Create a SessionStart hook in .github/hooks/ that greets me with
+the current time and how hot it is in Geretsried, on every session.
+```
+
+→ Agent writes `session-greeting.json` + a shell script: `date` + a keyless `wttr.in` call
+
+```bash
+TIME=$(date '+%H:%M on %A, %B %-d')
+WEATHER=$(curl -s --max-time 6 "https://wttr.in/Geretsried?format=%C+%t")
+echo "{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",
+  \"additionalContext\":\"It is $TIME. In Geretsried: $WEATHER.\"}}"
+```
+
+> *"Good day! It is 15:18 on Monday, June 29. In Geretsried right now: Partly cloudy +27°C."*
+
+Every new session opens with the **real time and weather** — deterministically, zero prompting.
 
 ---
 layout: image
