@@ -1269,6 +1269,23 @@ class: text-center
 
 <div class="text-2xl opacity-80 mt-2">Questions?</div>
 
-<BlogQrCta />
+<div class="flex items-center justify-center gap-12 mt-12">
+  <div class="text-left">
+    <h3>Find me online</h3>
+    <div class="text-xl opacity-90 mt-3">
+      Tutorials, deep dives &amp; experiments:
+    </div>
+    <a href="https://alexop.dev" class="text-3xl font-mono mt-4 inline-block">
+      alexop.dev
+    </a>
+  </div>
+
+  <div class="text-center">
+    <div class="bg-white p-4 rounded-2xl shadow-lg inline-block">
+      <img src="/slides-qr.svg" class="w-52 h-52" alt="QR code to these slides" />
+    </div>
+    <div class="text-sm opacity-80 mt-3">📱 Scan to open these slides</div>
+  </div>
+</div>
 
 <div class="text-lg opacity-60 mt-12">Alexander Opalic</div>
