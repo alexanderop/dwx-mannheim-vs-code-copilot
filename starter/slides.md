@@ -66,6 +66,29 @@ layout: center
 ## 🙋 Who has used GitHub Copilot in VS Code?
 
 ---
+layout: center
+class: 'text-center'
+---
+
+# Before we start — who's in the room?
+
+<div class="text-lg op-70 mt-2 mb-8">Hands up. I'm reading the room.</div>
+
+<TalkCardGrid
+  :columns="2"
+  compact
+  max-width="max-w-3xl"
+  :cards="[
+    { title: 'GitHub Copilot', logo: '/logos/githubcopilot.svg', glow: true },
+    { title: 'Claude Code', logo: '/logos/claude.svg', glow: true },
+    { title: 'Cursor', logo: '/logos/cursor.svg', glow: true },
+    { title: 'Codex / other', logo: '/logos/openai.svg', glow: true },
+  ]"
+/>
+
+<div class="text-sm op-60 mt-8">No wrong answer. I just want to know who I'm talking to.</div>
+
+---
 
 # About me
 
@@ -308,6 +331,18 @@ From [Anthropic's guide](https://www.anthropic.com/engineering/effective-context
 <div class="text-xs opacity-50 mt-2">
 
 Traced from VS Code Copilot Chat agent source (`extensions/copilot/.../summarizedConversationHistory.tsx`)
+
+</div>
+
+---
+
+## Where Exactly Does It Cut?
+
+<CompactionCutPoint />
+
+<div class="text-xs opacity-50 mt-2">
+
+The summary replaces everything before `firstKeptEntryId`; recent rounds stay verbatim, full history stays on disk.
 
 </div>
 
@@ -970,7 +1005,7 @@ backgroundSize: contain
 
 ---
 
-## Step 3: Create a new Skill
+## First: Create a Skill by Hand
 
 ```md
 ---
@@ -978,22 +1013,14 @@ name: hello
 description: 'use it everytime the user writes alex'
 ---
 
-# Hello SKill
+# Hello Skill
 
 if the user writes "alex", respond with "Hello, Alexander Opalic! How can I assist you today?"
 ```
 
 ---
 
-<DemoVideo
-  title="Create the hello skill"
-  src="/videos/hello-skill.mp4"
-  caption="Add .github/skills/hello/SKILL.md, then type “alex” in chat."
-/>
-
----
-
-## Step 3: Install skill-creator
+## Step 2: Install skill-creator
 
 ```bash
 npx skills add https://github.com/anthropics/skills --skill skill-creator
@@ -1048,14 +1075,6 @@ my-project/
 
 ---
 
-<DemoVideo
-  title="Install skill-creator"
-  src="/videos/install-skill-creator.mp4"
-  caption="npx skills add https://github.com/anthropics/skills --skill skill-creator"
-/>
-
----
-
 ## Step 3: Generate a New Skill
 
 Important Skill name and folder name must match!
@@ -1095,14 +1114,6 @@ https://alexop.dev/llms.txt and delegating research to a subagent.
 2. **REQUIRED - Delegate to subagent**: Use `runSubagent` with the fetched content and user's question.
 3. **Return the answer**: Present the subagent's findings to the user
 ````
-
----
-
-<DemoVideo
-  title="Generate the vue-ai-assistant skill"
-  src="/videos/vue-ai-assistant.mp4"
-  caption="skill-creator writes SKILL.md, then we ask a Vue question and it delegates to a subagent."
-/>
 
 ---
 layout: image
@@ -1197,14 +1208,6 @@ Update the excalidraw skill to use these brand colors:
 ```
 
 → Agent modifies the skill's SKILL.md to include color instructions
-
----
-
-<DemoVideo
-  title="Excalidraw skill with brand colors"
-  src="/videos/excalidraw-brand.mp4"
-  caption="The agent edits the skill’s SKILL.md to use our palette, then redraws."
-/>
 
 ---
 layout: image

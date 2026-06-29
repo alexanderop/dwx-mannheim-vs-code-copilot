@@ -12,8 +12,13 @@ green=$'\e[38;5;78m'
 white=$'\e[1;97m'
 bold=$'\e[1m'
 dim=$'\e[2m'
+selbg=$'\e[44m'          # selected tab background (blue)
+logoblue=$'\e[38;5;39m'  # rounded antenna boxes
+purple=$'\e[38;5;99m'    # visor body
+eyes=$'\e[38;5;84m'      # green eyes
 rst=$'\e[0m'
 
+line() { printf '%b\n' "$1"; }
 emit() { printf '%b\n' "$1"; sleep "${2:-0.2}"; }
 type_prompt() {
   local text="$1" i
@@ -23,6 +28,23 @@ type_prompt() {
 }
 
 clear
+
+# ── header / tab bar ────────────────────────────────────────────────────────
+printf '%b Session %b  %bIssues%b  %bPull requests%b  %bGists%b\n' \
+  "$selbg$white" "$rst" "$gray" "$rst" "$gray" "$rst" "$gray" "$rst"
+echo
+
+# ── Copilot mascot + version banner ─────────────────────────────────────────
+# Two rounded blue boxes (antennae) above a purple open-top visor with green eyes.
+line "  ${logoblue}╭───╮  ╭───╮${rst}"
+line "  ${logoblue}│   │  │   │${rst}"
+line "  ${logoblue}╰───╯  ╰───╯${rst}    ${bold}Copilot v1.0.65 uses AI.${rst}"
+line "  ${purple}██${eyes} ▐▌  ▐▌ ${purple}██${rst}    ${gray}Check for mistakes.${rst}"
+line "  ${purple}██        ██${rst}"
+line "  ${purple}████████████${rst}"
+echo
+sleep 0.9
+
 type_prompt "Why is my bounce rate so high on the Vue posts?"
 echo
 sleep 0.5

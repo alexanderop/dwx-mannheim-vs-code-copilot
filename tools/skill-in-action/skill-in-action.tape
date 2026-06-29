@@ -16,4 +16,4 @@ Type "bash tools/skill-in-action/present.sh"
 Enter
 Sleep 600ms
 Show
-Sleep 12s
+Sleep 13500ms
