@@ -30,24 +30,6 @@ by Alexander Opalic
 </div>
 
 ---
-layout: center
----
-
-# Quick heads-up 👋
-
-<div class="max-w-2xl mx-auto text-left space-y-5 mt-10 text-xl leading-relaxed">
-
-<div>👉&nbsp; This one's a bit more **spontaneous** — I jumped in as a short-notice replacement</div>
-
-<div>👉&nbsp; It's also my **first time giving two talks back-to-back** at a conference</div>
-
-<div>👉&nbsp; So if something isn't 100% perfect, **please bear with me** 🙏</div>
-
-<div>👉&nbsp; Let's have some fun and **dive in!**</div>
-
-</div>
-
----
 layout: image
 image: /copilotWorkshop/karpathy.png
 backgroundSize: contain
@@ -89,7 +71,7 @@ class: 'text-center'
 <About image="/alex-speaking.png" />
 
 ---
-layout: section
+layout: statement
 ---
 
 # What is an Agent?
