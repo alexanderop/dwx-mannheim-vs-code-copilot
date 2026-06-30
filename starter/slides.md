@@ -186,6 +186,48 @@ The entire request → response → execute → **loop** cycle in ~15 lines. An 
 
 ---
 
+## A Tool Call is Just Tokens
+
+```text
+<|tool_call|>
+{ "name": "read", "arguments": { "path": "src/sum.ts" } }
+<|end_tool_call|>
+```
+
+<v-click>
+
+```text
+<|tool_result|>
+1| export function sum(a: number, b: number) {
+2|   return a + b
+3| }
+<|end_tool_result|>
+```
+
+</v-click>
+
+<v-click>
+
+The model is **fine-tuned to emit these tokens**. The user can't type them.
+
+</v-click>
+
+---
+layout: quote
+---
+
+> "Making an LLM call tools is like putting Shakespeare through a month of Mandarin, then asking him to write a play in it."
+
+<div class="text-right opacity-60 mt-4">— Cloudflare, <em>Code Mode</em></div>
+
+<v-click>
+
+<div class="text-center mt-8 text-xl">LLMs have seen millions of TypeScript files — but few tool calls.<br><strong>Code &gt; raw tool-calling.</strong></div>
+
+</v-click>
+
+---
+
 ## Tool Registration
 
 ```typescript
@@ -255,10 +297,14 @@ backgroundSize: contain
 />
 
 ---
-layout: section
+transition: fade
 ---
 
-# Context Engineering
+<PartSlide
+  part="1"
+  title="Context Engineering"
+  subtitle="The real skill — everything the agent needs to know"
+/>
 
 ---
 layout: image
@@ -392,10 +438,14 @@ The <strong>Memory tool</strong> <span class="opacity-60">(preview)</span>. The 
 <p class="mt-6 opacity-70">Semantic & procedural are Markdown <em>you</em> write. Episodic is Markdown the <em>agent</em> writes for itself.</p>
 
 ---
-layout: section
+transition: fade
 ---
 
-# AGENTS.md
+<PartSlide
+  part="2"
+  title="AGENTS.md"
+  subtitle="The open standard for context"
+/>
 
 ---
 
@@ -523,10 +573,14 @@ After approval, save the learning.
 ```
 
 ---
-layout: section
+transition: fade
 ---
 
-# Back Pressure
+<PartSlide
+  part="3"
+  title="Back Pressure"
+  subtitle="Validation: types, lint, tests"
+/>
 
 ---
 
@@ -558,10 +612,14 @@ layout: section
 </Callout>
 
 ---
-layout: section
+transition: fade
 ---
 
-# Subagents
+<PartSlide
+  part="4"
+  title="Subagents"
+  subtitle="Specialized agents, invoked on demand"
+/>
 
 ---
 
@@ -593,6 +651,8 @@ hideFooter: true
 Click **Start** to see how the main agent delegates file search to a specialized Explore subagent.
 
 ---
+hideFooter: true
+---
 
 ## Parallel Subagent Execution
 
@@ -607,6 +667,8 @@ Click **Start** to see how the main agent delegates file search to a specialized
 
 Click **Start** to see the fan-out/fan-in pattern where multiple subagents search in parallel.
 
+---
+hideFooter: true
 ---
 
 ## Nested Subagents: Orchestrator Pattern
@@ -651,10 +713,14 @@ nanocode | claude-opus-4-5 | /Users/alexanderopalic/Projects/typescript/nanocode
 The **Fetch tool** uses a subagent to summarize HTML responses before returning.
 
 ---
-layout: section
+transition: fade
 ---
 
-# Skills
+<PartSlide
+  part="5"
+  title="Skills"
+  subtitle="Portable, reusable workflows"
+/>
 
 ---
 layout: image
@@ -705,22 +771,14 @@ The agent reads `skill.md` first. Reference docs load only when needed.
 />
 
 ---
-layout: section
+transition: fade
 ---
 
-# The Full Picture
-
----
-layout: image
-image: /copilotWorkshop/agentSum.png
-backgroundSize: contain
----
-
----
-layout: section
----
-
-# Hooks
+<PartSlide
+  part="6"
+  title="Hooks"
+  subtitle="Deterministic control over the loop"
+/>
 
 ---
 
@@ -901,10 +959,32 @@ Tip: bundle all three into <strong>one <code>PreToolUse</code> script</strong> �
 </style>
 
 ---
-layout: section
+transition: fade
 ---
 
-# Live Demo
+<PartSlide
+  icon="🗺️"
+  title="The Full Picture"
+  subtitle="Everything, now including hooks"
+/>
+
+---
+layout: center
+---
+
+## How the pieces fit — guide vs. control
+
+<FullPictureDiagram />
+
+---
+transition: fade
+---
+
+<PartSlide
+  part="7"
+  title="Live Demo"
+  subtitle="Putting it all together"
+/>
 
 ---
 
@@ -975,6 +1055,46 @@ description: 'use it everytime the user writes alex'
 
 if the user writes "alex", respond with "Hello, Alexander Opalic! How can I assist you today?"
 ```
+
+---
+
+## Frontmatter Options
+
+<div class="grid grid-cols-2 gap-x-8 gap-y-4 mt-8 text-sm">
+
+<div>
+<code class="text-[#ff6bed]">name</code> <span class="opacity-50 text-xs">required</span>
+<div class="opacity-70">Unique id — must match folder name</div>
+</div>
+
+<div>
+<code class="text-[#ff6bed]">description</code> <span class="opacity-50 text-xs">required</span>
+<div class="opacity-70">What it does <em>and when</em> to load it</div>
+</div>
+
+<div>
+<code>argument-hint</code>
+<div class="opacity-70">Hint shown in the <code>/</code> input</div>
+</div>
+
+<div>
+<code>user-invocable</code> <span class="opacity-50 text-xs">= true</span>
+<div class="opacity-70">Show as <code>/</code> slash command</div>
+</div>
+
+<div>
+<code>disable-model-invocation</code> <span class="opacity-50 text-xs">= false</span>
+<div class="opacity-70">Manual only — agent won't auto-load</div>
+</div>
+
+<div>
+<code>context</code> <span class="opacity-50 text-xs">= inline</span>
+<div class="opacity-70"><code>fork</code> → run in a clean subagent</div>
+</div>
+
+</div>
+
+<div class="mt-8 opacity-60 text-xs">Only <code>name</code> + <code>description</code> are needed — the rest tune <em>how</em> it loads.</div>
 
 ---
 
@@ -1078,6 +1198,24 @@ layout: image
 image: /copilotWorkshop/skillExample.png
 backgroundSize: contain
 ---
+
+---
+
+## Wait — we don't need the manual subagent
+
+The skill above wires up `#runSubagent` <span class="opacity-60">by hand</span>. Today there's a simpler way:
+
+```md {2}
+---
+context: fork
+---
+```
+
+<div class="mt-6 text-lg">
+
+One line → the whole skill runs in an **isolated subagent**. Only the final answer comes back. No `#runSubagent` plumbing needed.
+
+</div>
 
 ---
 
@@ -1219,12 +1357,32 @@ layout: center
 
 ## Key Takeaways
 
-1. **Agents = LLM + Tools + Loop** (nanocode shows this simply)
-2. **Context is finite** — treat tokens as budget
-3. **AGENTS.md** — standardized project context
-4. **Subagents** — specialized agents for complex tasks
-5. **Skills** — portable workflows that load on demand
-6. **Hooks** — deterministic guardrails (keep secrets out of context!)
+<div grid="~ cols-3 gap-5" class="mt-8 takeaways">
+  <FeatureCard icon="🤖" title="Agents" description="LLM + Tools + Loop"
+    titleColor="rgb(255, 107, 237)" borderColor="rgba(255, 107, 237, 0.55)" bgColor="rgba(255, 107, 237, 0.10)" />
+  <FeatureCard icon="🪟" title="Context" description="Finite — tokens are budget"
+    titleColor="rgb(79, 214, 255)" borderColor="rgba(79, 214, 255, 0.55)" bgColor="rgba(79, 214, 255, 0.10)" />
+  <FeatureCard icon="📄" title="AGENTS.md" description="Standardized project context"
+    titleColor="rgb(94, 234, 212)" borderColor="rgba(94, 234, 212, 0.55)" bgColor="rgba(94, 234, 212, 0.10)" />
+  <FeatureCard icon="🧩" title="Subagents" description="Specialists for complex tasks"
+    titleColor="rgb(199, 146, 234)" borderColor="rgba(199, 146, 234, 0.55)" bgColor="rgba(199, 146, 234, 0.10)" />
+  <FeatureCard icon="🛠️" title="Skills" description="Workflows that load on demand"
+    titleColor="rgb(255, 184, 108)" borderColor="rgba(255, 184, 108, 0.55)" bgColor="rgba(255, 184, 108, 0.10)" />
+  <FeatureCard icon="🪝" title="Hooks" description="Deterministic guardrails"
+    titleColor="rgb(255, 123, 114)" borderColor="rgba(255, 123, 114, 0.55)" bgColor="rgba(255, 123, 114, 0.10)" />
+</div>
+
+<style scoped>
+.takeaways :deep(.feature-card) {
+  text-align: center;
+}
+.takeaways :deep(.feature-card .text-5xl) {
+  margin-bottom: 0.75rem;
+}
+.takeaways :deep(.feature-card h3) {
+  margin-bottom: 0.4rem;
+}
+</style>
 
 ---
 
