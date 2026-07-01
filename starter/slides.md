@@ -222,20 +222,6 @@ The model is **fine-tuned to emit these tokens**. The user can't type them.
 </v-click>
 
 ---
-layout: quote
----
-
-> "Making an LLM call tools is like putting Shakespeare through a month of Mandarin, then asking him to write a play in it."
-
-<div class="text-right opacity-60 mt-4">— Cloudflare, <em>Code Mode</em></div>
-
-<v-click>
-
-<div class="text-center mt-8 text-xl">LLMs have seen millions of TypeScript files — but few tool calls.<br><strong>Code &gt; raw tool-calling.</strong></div>
-
-</v-click>
-
----
 
 ## Tool Registration
 
