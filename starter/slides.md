@@ -30,6 +30,15 @@ by Alexander Opalic
 </div>
 
 ---
+layout: center
+class: 'text-center'
+---
+
+# Who of you has noticed<br/>you're not writing code by hand anymore?
+
+<div class="text-lg op-70 mt-6">✋ Raise your hands.</div>
+
+---
 layout: image
 image: /copilotWorkshop/karpathy.png
 backgroundSize: contain
